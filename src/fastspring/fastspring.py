@@ -31,7 +31,7 @@ class FastSpringException(Exception):
 
 class FastSpringAPI(object):
 
-    def __init__(self, username, password, company, api_domain = 'api.fastspring.com', debug = False):
+    def __init__(self, username, password, company, api_domain='api.fastspring.com', debug=False):
         """
         Initialize the API object. 'username', 'password', and 'company' should
         be provided with your FastSpring account.
@@ -55,7 +55,6 @@ class FastSpringAPI(object):
         else:
             raise FastSpringException('Could not get order information', status, message, reason)
 
-
     def generate_coupon(self, prefix):
         """
         Generate a cupon with the specified prefix. Returns a dict of the cupon
@@ -69,21 +68,21 @@ class FastSpringAPI(object):
         else:
             raise FastSpringException('Could not generate coupon', status, message, reason)
 
-
     def get_subscription(self, reference):
         """
         Get a dict of subscription information based on a reference ID. Returns
-        None on success. 
-        
+        None on success.
+
         Failure raises a FastSpringException.
         """
         content, status, message, reason = self._request('GET', 'subscription/{}'.format(reference))
         return xmltodict.parse(content)
 
     def update_subscription(self, reference, subscription_data):
-        content, status, message, reason = self._request('PUT', 'subscription/{}'.format(reference), {'subscription': subscription_data})
+        content, status, message, reason = self._request('PUT', 'subscription/{}'.format(reference),
+                                                         {'subscription': subscription_data})
         if status != 200:
-            raise FastSpringException('Could not update subscripiton',status, message, reason)
+            raise FastSpringException('Could not update subscripiton', status, message, reason)
 
     def cancel_subscription(self, reference):
         """
@@ -98,25 +97,26 @@ class FastSpringAPI(object):
         elif not status == 200:
             raise FastSpringException('Could not cancel subscription', status, message, reason)
 
-    def renew_subscription(self, reference, simulate = None):
+    def renew_subscription(self, reference, simulate=None):
         """
         Renew a subscription based on its reference ID. This method returns a
         four-tuple in the format:
 
-        (<True|False success>, <HTTP status code>, <HTTP message>, <HTTP reason>) 
+        (<True|False success>, <HTTP status code>, <HTTP message>, <HTTP reason>)
         """
         if simulate:
             data = 'sumulate={}'.format(simulate)
         else:
             data = None
-            
-        content, status, message, reason = self._request('POST', 'subscription/{}/renew'.format(reference), data, skip_unparse = True)
+
+        content, status, message, reason = self._request('POST', 'subscription/{}/renew'.format(reference), data,
+                                                         skip_unparse=True)
         if status == 200:
             return (True, status, message, reason)
         else:
             return (False, status, message, reason)
 
-    def _request(self, method, path, data = None, skip_unparse = False):
+    def _request(self, method, path, data=None, skip_unparse=False):
         """
         Internal method for making requests to the FastSpring server.
         """
@@ -124,7 +124,7 @@ class FastSpringAPI(object):
             body = xmltodict.unparse(data)
         else:
             body = data
-            
+
         authstring = 'user={}&pass={}'.format(self.username, self.password)
 
         if path.startswith('/'):
@@ -134,10 +134,10 @@ class FastSpringAPI(object):
         request_path = '/company/{}/{}?{}'.format(self.company, path, authstring)
 
         if self.debug:
-            print('-'*80)
+            print('-' * 80)
             print('{}    {}{}'.format(method, self.api_domain, request_path))
             print(body)
-            print('-'*80)
+            print('-' * 80)
 
         conn = http.client.HTTPSConnection(self.api_domain)
         headers = {"Content-type": "application/xml"}
