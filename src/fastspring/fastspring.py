@@ -8,8 +8,7 @@ https://github.com/fastspring/fastspring-api/
 This module relies on Martin Blech's highly useful xmltodict module:
 https://github.com/martinblech/xmltodict/
 
-This is the Python 3 compatible version. A Python 2 package is available
-from the same Github repository.
+This is the Python 3 compatible version.
 """
 
 import http.client
@@ -112,9 +111,9 @@ class FastSpringAPI(object):
         content, status, message, reason = self._request('POST', 'subscription/{}/renew'.format(reference), data,
                                                          skip_unparse=True)
         if status == 200:
-            return (True, status, message, reason)
+            return True, status, message, reason
         else:
-            return (False, status, message, reason)
+            return False, status, message, reason
 
     def _request(self, method, path, data=None, skip_unparse=False):
         """

@@ -1,6 +1,6 @@
 # fastspring
 
-This is a simple Python module designed to interact with the FastSpring ordering
+This is a simple Python module designed to interact with the FastSpring Classic ordering
 and subscription API. This module requires [xmltodict][1] to work. Data is
 passed into and returned from the API object in dicts.
 
